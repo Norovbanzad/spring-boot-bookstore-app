@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' | BookHub'">BookHub</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script defer th:src="@{/js/main.js}"></script>
+</head>
+
+<body>
+<header th:fragment="header" class="site-header">
+    <nav class="navbar container">
+        <a th:href="@{/}" class="brand">Book<span>Hub</span></a>
+        <ul class="nav-links">
+            <li><a th:href="@{/}" th:classappend="${activePage} == 'home' ? 'active'">Home</a></li>
+            <li><a th:href="@{/books}" th:classappend="${activePage} == 'books' ? 'active'">Books</a></li>
+            <li><a th:href="@{/books/new}" class="btn btn-primary btn-sm">Add Book</a></li>
+        </ul>
+    </nav>
+</header>
+
+<footer th:fragment="footer" class="site-footer">
+    <div class="container">
+        <p>&copy; 2026 BookHub Bookstore. Built with Spring Boot, PostgreSQL &amp; Thymeleaf.</p>
+    </div>
+</footer>
+</body>
+
+</html>

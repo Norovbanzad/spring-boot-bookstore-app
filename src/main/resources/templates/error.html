@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout :: head('Error')}"></head>
+
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container main-content narrow ta-center">
+    <div class="error-box">
+        <p class="error-code" th:text="${errorTitle} ?: 'Something went wrong'">Error</p>
+        <p class="error-message" th:text="${errorMessage} ?: 'An unexpected error occurred.'">Message</p>
+        <a th:href="@{/}" class="btn btn-primary">Back to Home</a>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+
+</html>
