@@ -1,7 +1,5 @@
 package com.example.bookstore.service;
 
-import com.example.bookstore.BookstoreApplication;
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;
