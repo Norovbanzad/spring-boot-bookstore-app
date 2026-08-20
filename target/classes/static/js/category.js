@@ -5,10 +5,12 @@ const API_URL = "/api/categories";
 const form = document.getElementById('category-form');
 const categoryIdInput = document.getElementById('category-id');
 const nameInput = document.getElementById('category-name');
+const descriptionInput = document.getElementById('category-description');
 const tableBody = document.getElementById('category-table-body');
 
 //buttons
 const cancelButton = document.getElementById('cancel-button');
+const submitButton = document.getElementById('submit-button');
 
 console.log("Category JavaScript loaded");
 
@@ -50,6 +52,12 @@ function renderCategories(categories) {
 		editButton.className = 'button';
 		editButton.classList.add('edit-button');
 		editButton.dataset.id = category.id;
+
+		editButton.addEventListener('click', () => {
+			categoryIdInput.value = category.id;
+			nameInput.value = category.name;
+		});
+
 		actionFeild.appendChild(editButton);
 		
 		const deleteButton = document.createElement('button');
@@ -64,15 +72,6 @@ function renderCategories(categories) {
 		newRow.appendChild(idFeild);
 		newRow.appendChild(nameField);
 		newRow.appendChild(actionFeild);
-//		
-//		newRow.innerHTML = 
-//			`<td>${category.id}</td>
-//			 <td>${escapeHtml(category.name)}</td>
-//			 <td class="actions">
-//			    <button class="edit-button button" data-id="${category.id}">Edit</button>
-//			 	<button class="delete-button button" data-id="${category.id}">Delete</button>
-//			 </td>`;
-//		
 		tableBody.appendChild(newRow);
 	}	
 	
@@ -84,16 +83,22 @@ async function handleSubmit(event) {
 	
 	event.preventDefault();
 	
+	const id = categoryIdInput.value.trim();
 	const newCategoryName = nameInput.value;
 	
 	const category = {
 		name : newCategoryName
 	}
+
+	const isEditing = id !== "";
+	const url = isEditing ? `${API_URL}/${id}` : API_URL;
+
+	const method = isEditing ? 'PUT': 'POST';
 	
 	try {
 	
-	await fetch(API_URL, {
-		method: "POST",
+	await fetch(url, {
+		method: method,
 		
 		headers: {
 			"Content-Type": "application/json"
@@ -101,11 +106,13 @@ async function handleSubmit(event) {
 		
 		body: JSON.stringify(category),
 	});
-	
-	
-	loadCategories();
+
+	form.reset();
+	categoryIdInput.value = "";
 	nameInput.value = "";
+	descriptionInput.value = "";
 	
+	await loadCategories();	
 	
 	} catch (error) {
 		console.log(error);
@@ -137,7 +144,7 @@ async function handleDelete(event) {
 
 cancelButton.addEventListener("click", () => {
 	nameInput.value = "";
+	descriptionInput.value = "";
 });
-
 
 loadCategories();
