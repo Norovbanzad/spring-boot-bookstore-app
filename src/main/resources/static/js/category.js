@@ -11,6 +11,7 @@ const tableBody = document.getElementById('category-table-body');
 //buttons
 const cancelButton = document.getElementById('cancel-button');
 const submitButton = document.getElementById('submit-button');
+const refreshButton = document.getElementById('refresh-button');
 
 console.log("Category JavaScript loaded");
 
@@ -18,7 +19,10 @@ async function loadCategories() {
 	try {
 		const categoriesResponse = await fetch(API_URL);
 		const categoriesData = await categoriesResponse.json();
-		console.log(categoriesData);
+		
+		if(!categoriesResponse.ok) {
+			throw new Error("Could not reload categories");
+		}
 		
 		renderCategories(categoriesData);
 		
@@ -30,7 +34,11 @@ async function loadCategories() {
 function renderCategories(categories) {
 	
 	if(categories.length === 0) {
-		tableBody.innerHTML = `<p>No categories found.</p>`;
+		const newRow = document.createElement('tr');
+		const messageField = document.createElement('td');
+		messageField.textContent = "No categories";
+		newRow.appendChild(nameField);
+		tableBody.appendChild(newRow);
 	}
 	
 	tableBody.innerHTML = "";
@@ -56,6 +64,7 @@ function renderCategories(categories) {
 		editButton.addEventListener('click', () => {
 			categoryIdInput.value = category.id;
 			nameInput.value = category.name;
+			submitButton.textContent = 'Update';
 		});
 
 		actionFeild.appendChild(editButton);
@@ -74,10 +83,21 @@ function renderCategories(categories) {
 		newRow.appendChild(actionFeild);
 		tableBody.appendChild(newRow);
 	}	
+	resetForm();
 	
 }
 
 form.addEventListener('submit', handleSubmit);
+
+refreshButton.addEventListener('click', () => {
+	loadCategories();
+	showMessage("List refreshed");
+});
+
+cancelButton.addEventListener("click", () => {
+	resetForm();
+	showMessage("Editing canceled");
+});
 
 async function handleSubmit(event) {
 	
@@ -107,10 +127,13 @@ async function handleSubmit(event) {
 		body: JSON.stringify(category),
 	});
 
-	form.reset();
-	categoryIdInput.value = "";
-	nameInput.value = "";
-	descriptionInput.value = "";
+	 if (isEditing) {
+            showMessage("Author updated successfully");
+        } else {
+            showMessage("Author created successfully");
+        }
+
+	resetForm();
 	
 	await loadCategories();	
 	
@@ -136,15 +159,27 @@ async function handleDelete(event) {
 			const row = button.closest("tr");
 			if(row) {
 				row.remove();
+				showMessage("Category deleted");
 			}
 		} catch (error) {
 			console.log(error);
 		}
 }
 
-cancelButton.addEventListener("click", () => {
+function resetForm() {
+	form.reset();
+	categoryIdInput.value = "";
 	nameInput.value = "";
 	descriptionInput.value = "";
-});
+	submitButton.textContent = "Add Category";
+}
+
+function showMessage(text) {
+    message.textContent = text;
+    message.hidden = false;
+    setTimeout(() => {
+        message.hidden = true;
+    }, 3000)
+}
 
 loadCategories();
