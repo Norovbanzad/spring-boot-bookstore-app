@@ -1,9 +1,6 @@
 package com.example.bookstore.service;
 
-import com.example.bookstore.BookstoreApplication;
 import java.util.List;
-
-import javax.management.RuntimeErrorException;
 
 import org.springframework.stereotype.Service;
 
@@ -18,17 +15,15 @@ import com.example.bookstore.repository.CategoryRepository;
 
 @Service
 public class BookService {
-    private final BookstoreApplication bookstoreApplication;
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
     private final AuthorRepository authorRepository;
 
     public BookService(BookRepository bookRepository, CategoryRepository categoryRepository,
-            AuthorRepository authorRepository, BookstoreApplication bookstoreApplication) {
+            AuthorRepository authorRepository) {
         this.bookRepository = bookRepository;
         this.categoryRepository = categoryRepository;
         this.authorRepository = authorRepository;
-        this.bookstoreApplication = bookstoreApplication;
     }
 
     public List<BookResponse> findAllBooks() {
