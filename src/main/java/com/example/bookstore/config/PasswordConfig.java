@@ -13,4 +13,6 @@ public class PasswordConfig {
 		// RSA - BCryt Encryption algorithm
 		return new BCryptPasswordEncoder();
 	}
+	
+	
 }

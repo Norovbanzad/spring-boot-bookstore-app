@@ -6,9 +6,11 @@ import java.util.Locale;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.bookstore.dto.RegisterRequest;
 import com.example.bookstore.dto.UserCreateRequest;
 import com.example.bookstore.dto.UserResponse;
 import com.example.bookstore.entity.User;
+import com.example.bookstore.model.Role;
 import com.example.bookstore.repository.UserRepository;
 
 @Service
@@ -21,6 +23,25 @@ public class UserService {
 	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+	}
+	
+	public void registerCustomer(RegisterRequest request) {
+		String email = request.getEmail().trim().toLowerCase(Locale.ROOT);
+		
+		if(userRepository.existsByEmail(email)) {
+			System.out.println("Email is already registered");
+		}
+		
+		User user = new User();
+		
+		user.setFirstName(request.getFirstName().trim());
+		user.setLastName(request.getLastName().trim());
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
+		
+		user.setRole(Role.CUSTOMER);
+		user.setEnabled(true);
+		
+		userRepository.save(user);
 	}
 	
 	public UserResponse createUser(UserCreateRequest request) {
