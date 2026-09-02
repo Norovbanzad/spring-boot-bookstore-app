@@ -41,7 +41,7 @@ public class RegisterController {
 			bindingResult.rejectValue("email", "duplicate", e.getMessage());
 			return "register";
 		}
-		return "redirect:/login";
+		return "redirect:/login?registered";
 	}
 
 }

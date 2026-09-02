@@ -36,6 +36,7 @@ public class UserService {
 		
 		user.setFirstName(request.getFirstName().trim());
 		user.setLastName(request.getLastName().trim());
+		user.setEmail(request.getEmail().trim());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
 		
 		user.setRole(Role.CUSTOMER);
