@@ -59,12 +59,13 @@ public class BookService {
         return toResponse(savedBook);
     }
 
+    @Transactional
     public BookResponse updateBook(Long id, BookRequest request) {
         Book foundBook = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found with ID: " + id));
 
-        Category category = categoryRepository.findById(id).orElseThrow(()-> new RuntimeException("Category not found with ID: " + request.categoryId()));
+        Category category = categoryRepository.findById(request.categoryId()).orElseThrow(()-> new RuntimeException("Category not found with ID: " + request.categoryId()));
 
-        Author author = authorRepository.findById(id).orElseThrow(()-> new RuntimeException("Author not found with ID: " + request.authorId()));
+        Author author = authorRepository.findById(request.authorId()).orElseThrow(()-> new RuntimeException("Author not found with ID: " + request.authorId()));
 
         if (bookRepository.existsByIsbnAndIdNot(request.isbn(), id)) {
             throw new RuntimeException("Another book already uses ISBN: " + request.isbn());

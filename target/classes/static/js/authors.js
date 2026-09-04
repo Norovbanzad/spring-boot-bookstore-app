@@ -12,6 +12,9 @@ const saveButton = document.getElementById('save-button');
 const cancelButton = document.getElementById('cancel-button');
 const message = document.getElementById('message');
 
+const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
 async function loadAuthors() {
     try {
         const response = await fetch(API_URL);
@@ -111,7 +114,8 @@ async function handleSubmit(e) {
         const response = await fetch(url, {
             method: method,
             headers : {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+				[csrfHeader]: csrfToken
             },
             body : JSON.stringify(author)
         });
@@ -154,7 +158,10 @@ function startEdit(author) {
 
     try {
         const response = await fetch(`${API_URL}/${id}`, {
-            method: "DELETE"
+            method: "DELETE",
+			headers: {
+				[csrfHeader]: csrfToken
+			}
         });
         if(!response.ok) {
             throw new Error('Delete failed');
