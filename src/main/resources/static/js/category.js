@@ -15,6 +15,10 @@ const refreshButton = document.getElementById('refresh-button');
 
 console.log("Category JavaScript loaded");
 
+const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+
 async function loadCategories() {
 	try {
 		const categoriesResponse = await fetch(API_URL);
@@ -121,7 +125,8 @@ async function handleSubmit(event) {
 		method: method,
 		
 		headers: {
-			"Content-Type": "application/json"
+			"Content-Type": "application/json",
+			[csrfHeader]: csrfToken
 		},
 		
 		body: JSON.stringify(category),
@@ -154,6 +159,9 @@ async function handleDelete(event) {
 		try {
 			await fetch(`${API_URL}/${id}`, {
 				method: "DELETE",
+				headers: {
+					[csrfHeader]: csrfToken
+				}
 			});
 			
 			const row = button.closest("tr");

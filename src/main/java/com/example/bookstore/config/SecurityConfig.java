@@ -24,6 +24,8 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(auth ->
 				auth.requestMatchers(
 						"/",
+						"/shop",
+						"/shop/**",
 						"/login",
 						"/register",
 						"/css/**",
