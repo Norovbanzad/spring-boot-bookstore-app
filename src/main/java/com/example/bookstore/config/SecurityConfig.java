@@ -47,7 +47,7 @@ public class SecurityConfig {
 								"/api/authors/**",
 								"/api/categories/**").hasRole("ADMIN")
 						.requestMatchers(
-								"/customer/**").hasRole("CUSTOMER")
+								"/customer/**", "/api/cart/**").hasRole("CUSTOMER")
 						
 						.anyRequest()
 						.authenticated()
