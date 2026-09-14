@@ -3,27 +3,34 @@ package com.example.bookstore.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.bookstore.dto.OrderItemResponse;
 import com.example.bookstore.dto.OrderResponse;
+import com.example.bookstore.entity.Book;
 import com.example.bookstore.entity.Order;
 import com.example.bookstore.entity.OrderItem;
+import com.example.bookstore.entity.OrderStatus;
 import com.example.bookstore.entity.User;
+import com.example.bookstore.exception.BusinessRuleException;
 import com.example.bookstore.exception.ResourceNotFoundException;
+import com.example.bookstore.repository.BookRepository;
 import com.example.bookstore.repository.OrderItemRepository;
 import com.example.bookstore.repository.OrderRepository;
 
 @Service 
 public class CustomerOrderService {
+    private final BookRepository bookRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final CurrentUserService currentUserService;
 
     public CustomerOrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
-            CurrentUserService currentUserService) {
+            CurrentUserService currentUserService, BookRepository bookRepository) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.currentUserService = currentUserService;
+        this.bookRepository = bookRepository;
     }
 
     public List<OrderResponse> findCurrentUserOrders() {
@@ -44,6 +51,31 @@ public class CustomerOrderService {
                                     });
 
         return toResponse(order);
+    }
+
+    // cancel order
+    @Transactional 
+    public OrderResponse cancelOrder(Long id) {
+        User user = currentUserService.getCurrentUser();
+
+        Order order = orderRepository.findByIdAndUser(id, user).orElseThrow(() -> 
+            new ResourceNotFoundException("Order not found with ID: " + id)
+        );
+
+        if(order.getStatus() != OrderStatus.PENDING && order.getStatus() != OrderStatus.CONFIRMED) {
+            throw new BusinessRuleException("This order cannot be cancelled");
+        }
+
+        List<OrderItem> orderItems = orderItemRepository.findByOrderOrderByIdAsc(order);
+        for(OrderItem item : orderItems) {
+            Book book = item.getBook();
+            book.setStockQuantity(book.getStockQuantity() + item.getQuantity());
+            bookRepository.save(book);
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+
+        return toResponse(orderRepository.save(order));
     }
 
     private OrderResponse toResponse(Order order) {
