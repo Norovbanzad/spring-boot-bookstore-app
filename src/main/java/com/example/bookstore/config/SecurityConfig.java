@@ -32,7 +32,7 @@ public class SecurityConfig {
 						"/js/**",
 						"/images/**",
 						"/api/health",
-						"/error"
+						"/error", "/api/payments/stripe/webhook"
 						).permitAll() // all the above files needed to be disclosed.
 						
 						.requestMatchers(
@@ -47,13 +47,14 @@ public class SecurityConfig {
 								"/api/authors/**",
 								"/api/categories/**").hasRole("ADMIN")
 						.requestMatchers(
-								"/customer/**", "/api/cart/**", "/api/checkout/**", "/api/customer/**" + "").hasRole("CUSTOMER")
+								"/customer/**", "/api/cart/**", "/api/checkout/**", "/api/customer/**" , "/payment/success").hasRole("CUSTOMER")
 						
 						.anyRequest()
 						.authenticated()
 						
 				
 				);
+		http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/payments/stripe/webhook"));
 		http.formLogin(form -> 
 				form.loginPage("/login")
 					.loginProcessingUrl("/login")
