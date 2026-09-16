@@ -17,6 +17,7 @@ import com.example.bookstore.exception.ResourceNotFoundException;
 import com.example.bookstore.repository.BookRepository;
 import com.example.bookstore.repository.OrderItemRepository;
 import com.example.bookstore.repository.OrderRepository;
+import com.example.bookstore.repository.PaymentRepository;
 
 @Service 
 public class CustomerOrderService {
@@ -24,13 +25,16 @@ public class CustomerOrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final CurrentUserService currentUserService;
+    private final PaymentRepository paymentRepository;
 
-    public CustomerOrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
-            CurrentUserService currentUserService, BookRepository bookRepository) {
+    public CustomerOrderService(BookRepository bookRepository, OrderRepository orderRepository,
+            OrderItemRepository orderItemRepository, CurrentUserService currentUserService,
+            PaymentRepository paymentRepository) {
+        this.bookRepository = bookRepository;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.currentUserService = currentUserService;
-        this.bookRepository = bookRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     public List<OrderResponse> findCurrentUserOrders() {
@@ -84,10 +88,11 @@ public class CustomerOrderService {
                                 .stream()
                                 .map(this::toItemResponse)
                                 .toList();
-        
-
+        String paymentStatus = paymentRepository.findByOrder(order)
+                                .map(payment -> payment.getStatus().name())
+                                .orElse("NOT_STARTED");
         return new OrderResponse(order.getId(), order.getStatus().name(), 
-                                 order.getTotalAmount(), order.getCreatedAt(), items);
+                                 order.getTotalAmount(), paymentStatus, order.getCreatedAt(), items);
     }
 
     private OrderItemResponse toItemResponse(OrderItem item) {

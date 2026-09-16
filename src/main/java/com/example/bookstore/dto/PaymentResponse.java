@@ -1,0 +1,13 @@
+package com.example.bookstore.dto;
+
+import java.math.BigDecimal;
+
+public record PaymentResponse(
+    Long id,
+    Long orderId,
+    String status,
+    BigDecimal amount,
+    String provider
+) {
+    
+}
