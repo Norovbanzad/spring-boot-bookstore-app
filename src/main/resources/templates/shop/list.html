@@ -19,7 +19,7 @@
 	<main class="container">
 		<section class="hero">
 			<h1>Find your next book</h1>
-			<p>Browse our bookstore catalogue.</p>
+			<p>Browse our bookstore catalog.</p>
 		</section>
 
 		<section class="filters">
@@ -58,7 +58,7 @@
 				<h2>Books</h2>
 
 				<p th:if="${books.totalElements > 0}">
-					<span th:text="${books.totalElements}">0</span>books found
+					<span th:text="${books.totalElements}">0</span> books found
 				</p>
 			</div>
 			<div class="empty-state" th:if="${books.isEmpty()}">No books
