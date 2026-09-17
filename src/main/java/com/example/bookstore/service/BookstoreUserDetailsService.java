@@ -1,4 +1,4 @@
-package com.example.bookstore.security;
+package com.example.bookstore.service;
 
 import java.util.Locale;
 
