@@ -96,7 +96,7 @@
 		</section>
 		
 		<nav class="pagination" th:if="${books.totalPages > 1}">
-			<a th:if="${books.hasPrevious()}" th:href="@{/shop(page=${books.number-1,
+			<a th:if="${books.hasPrevious()}" th:href="@{/shop(page=${books.number-1},
 					keyword=${keyword}, categoryId=${categoryId})}">Previous</a>
 			
 			<span>
